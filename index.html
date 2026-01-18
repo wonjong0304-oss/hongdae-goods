@@ -1,4 +1,3 @@
-[홍대굿즈샵_v7 (1).html](https://github.com/user-attachments/files/24696499/_v7.1.html)
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -7,7 +6,7 @@
     <title>홍대 굿즈샵</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎭</text></svg>">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
         
         :root {
             --bg: #000;
@@ -19,13 +18,27 @@
             --danger: #ff453a;
             --warning: #ff9f0a;
         }
+
+        body.light-mode {
+            --bg: #f2f2f7;
+            --card: #fff;
+            --text: #000;
+            --text-sub: #6e6e73;
+        }
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Pretendard', sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
+            min-height: -webkit-fill-available;
             line-height: 1.4;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        html {
+            height: -webkit-fill-available;
         }
 
         /* 인트로 */
@@ -37,8 +50,32 @@
             display: flex;
             flex-direction: column;
             padding: 60px 28px 40px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        body.light-mode .intro {
+            background: linear-gradient(180deg, #e8e8f0 0%, #d8d8e8 50%, #f2f2f7 100%);
         }
         .intro.hidden { display: none; }
+
+        .intro-top {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .theme-toggle {
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            border-radius: 20px;
+            font-size: 14px;
+            color: var(--text);
+            cursor: pointer;
+        }
+        body.light-mode .theme-toggle {
+            background: rgba(0,0,0,0.1);
+        }
 
         .intro-content {
             flex: 1;
@@ -81,6 +118,10 @@
             background: rgba(255,255,255,0.05);
             border-radius: 14px;
             border: 1px solid rgba(255,255,255,0.1);
+        }
+        body.light-mode .benefit-item {
+            background: rgba(0,0,0,0.03);
+            border-color: rgba(0,0,0,0.1);
         }
 
         .benefit-icon {
@@ -137,6 +178,8 @@
             z-index: 200;
             display: none;
             flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .onboarding.show { display: flex; }
 
@@ -154,6 +197,7 @@
             border-radius: 2px;
             margin-right: 16px;
         }
+        body.light-mode .progress-bar { background: #ddd; }
         .progress-fill {
             height: 100%;
             background: var(--primary);
@@ -211,6 +255,7 @@
             gap: 14px;
             transition: all 0.2s;
         }
+        body.light-mode .option-btn { border-color: #ddd; }
         .option-btn:active { transform: scale(0.98); }
         .option-btn.selected { border-color: var(--primary); background: rgba(0,122,255,0.15); }
 
@@ -224,6 +269,7 @@
             align-items: center;
             justify-content: center;
         }
+        body.light-mode .option-icon { background: #eee; }
         .option-btn.selected .option-icon { background: var(--primary); }
 
         .option-text { flex: 1; }
@@ -238,6 +284,7 @@
             z-index: 200;
             display: none;
             flex-direction: column;
+            overflow: hidden;
         }
         .result-screen.show { display: flex; }
 
@@ -247,7 +294,9 @@
             align-items: center;
             gap: 12px;
             border-bottom: 1px solid #222;
+            flex-shrink: 0;
         }
+        body.light-mode .result-header { border-color: #ddd; }
 
         .back-btn {
             width: 40px;
@@ -264,7 +313,9 @@
         .result-content {
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 20px;
+            padding-bottom: 100px;
         }
 
         .ai-card {
@@ -273,6 +324,10 @@
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 24px;
+        }
+        body.light-mode .ai-card {
+            background: linear-gradient(135deg, #e8e8f8, #d8d8f0);
+            border-color: #ccc;
         }
 
         .ai-badge {
@@ -284,6 +339,7 @@
             border-radius: 20px;
             font-size: 12px;
             font-weight: 700;
+            color: #fff;
             margin-bottom: 16px;
         }
 
@@ -295,10 +351,11 @@
             border-radius: 12px;
             padding: 16px;
         }
+        body.light-mode .ai-reasons { background: rgba(0,0,0,0.05); }
         .ai-reasons-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; }
         .reason-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; font-size: 14px; }
         .reason-item:last-child { margin-bottom: 0; }
-        .reason-icon { width: 20px; height: 20px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+        .reason-icon { width: 20px; height: 20px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; color: #fff; }
 
         .section-title {
             font-size: 14px;
@@ -320,7 +377,6 @@
         }
         .shop-card:active { transform: scale(0.98); }
         .shop-card.first { border: 1px solid rgba(0,122,255,0.3); }
-        .shop-card.visited { opacity: 0.5; }
 
         .shop-photo {
             width: 100%;
@@ -331,6 +387,9 @@
             justify-content: center;
             font-size: 40px;
             position: relative;
+        }
+        body.light-mode .shop-photo {
+            background: linear-gradient(135deg, #e8e8e8 0%, #d8d8d8 100%);
         }
 
         .shop-status {
@@ -359,17 +418,7 @@
             justify-content: center;
             font-size: 14px;
             font-weight: 800;
-        }
-
-        .shop-visited-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 6px 10px;
-            background: var(--success);
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
+            color: #fff;
         }
 
         .shop-body { padding: 14px; }
@@ -389,6 +438,7 @@
             font-size: 13px;
             color: var(--text-sub);
             margin-bottom: 10px;
+            flex-wrap: wrap;
         }
 
         .shop-genres {
@@ -404,12 +454,19 @@
             font-weight: 600;
             color: #a78bfa;
         }
+        body.light-mode .genre-tag { background: #e8e8f8; }
 
         /* 하단 버튼 */
         .result-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             padding: 16px 20px 32px;
+            background: var(--bg);
             border-top: 1px solid #222;
         }
+        body.light-mode .result-footer { border-color: #ddd; }
 
         .start-btn {
             width: 100%;
@@ -442,6 +499,7 @@
             display: none;
             flex-direction: column;
             height: 100vh;
+            height: 100dvh;
         }
         .app.show { display: flex; }
 
@@ -449,7 +507,11 @@
             background: var(--card);
             padding: 20px;
             border-bottom: 1px solid #333;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            max-height: 45vh;
         }
+        body.light-mode .current-dest { border-color: #ddd; }
 
         .dest-label {
             display: flex;
@@ -480,9 +542,11 @@
             justify-content: center;
             font-size: 11px;
             font-weight: 700;
+            color: #fff;
         }
-        .stamp.done { background: var(--success); }
-        .stamp.current { background: var(--primary); animation: pulse 2s infinite; }
+        body.light-mode .stamp { background: #ddd; color: #000; }
+        .stamp.done { background: var(--success); color: #fff; }
+        .stamp.current { background: var(--primary); color: #fff; animation: pulse 2s infinite; }
         @keyframes pulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(0,122,255,0.5); }
             50% { box-shadow: 0 0 0 8px rgba(0,122,255,0); }
@@ -505,9 +569,10 @@
             align-items: center;
             justify-content: center;
             font-size: 36px;
+            flex-shrink: 0;
         }
 
-        .dest-info { flex: 1; }
+        .dest-info { flex: 1; min-width: 0; }
         .dest-info h2 { font-size: 20px; font-weight: 800; margin-bottom: 4px; }
         .dest-info p { font-size: 14px; color: var(--text-sub); }
 
@@ -517,6 +582,8 @@
             border-radius: 20px;
             font-size: 15px;
             font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
         }
 
         .dest-status-bar {
@@ -528,11 +595,13 @@
             border-radius: 12px;
             margin-bottom: 14px;
         }
+        body.light-mode .dest-status-bar { background: #e8e8e8; }
         .dest-status-bar .status {
             padding: 6px 12px;
             border-radius: 8px;
             font-size: 13px;
             font-weight: 700;
+            color: #fff;
         }
         .dest-status-bar .status.open { background: var(--success); }
         .dest-status-bar .status.closed { background: var(--danger); }
@@ -554,15 +623,17 @@
             font-size: 15px;
             font-weight: 700;
             cursor: pointer;
+            color: #fff;
         }
-        .action-btn.primary { background: var(--primary); color: #fff; }
-        .action-btn.secondary { background: #333; color: #fff; }
-        .action-btn.success { background: var(--success); color: #fff; }
-        .action-btn.danger { background: var(--danger); color: #fff; }
+        .action-btn.primary { background: var(--primary); }
+        .action-btn.secondary { background: #333; }
+        body.light-mode .action-btn.secondary { background: #ddd; color: #000; }
+        .action-btn.success { background: var(--success); }
+        .action-btn.danger { background: var(--danger); }
 
         /* 지도 */
-        .map-container { flex: 1; position: relative; }
-        #map { width: 100%; height: 100%; }
+        .map-container { flex: 1; position: relative; min-height: 200px; }
+        #map, #freeMap { width: 100%; height: 100%; }
 
         .map-status {
             position: absolute;
@@ -578,6 +649,7 @@
             gap: 12px;
             z-index: 10;
         }
+        body.light-mode .map-status { background: rgba(255,255,255,0.9); }
         .map-status-icon {
             width: 44px;
             height: 44px;
@@ -596,6 +668,7 @@
             border-radius: 8px;
             font-size: 12px;
             font-weight: 700;
+            color: #fff;
         }
         .map-status-badge.open { background: var(--success); }
         .map-status-badge.closed { background: var(--danger); }
@@ -609,11 +682,11 @@
             border-radius: 50%;
             font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             z-index: 10;
         }
         .loc-btn { bottom: 100px; right: 16px; }
-        .list-btn { bottom: 160px; right: 16px; }
+        .theme-btn { bottom: 160px; right: 16px; font-size: 18px; }
 
         .next-preview {
             position: absolute;
@@ -626,7 +699,7 @@
             display: flex;
             align-items: center;
             gap: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
             z-index: 10;
         }
         .next-icon {
@@ -639,6 +712,7 @@
             justify-content: center;
             font-size: 24px;
         }
+        body.light-mode .next-icon { background: #e8e8e8; }
         .next-info { flex: 1; }
         .next-info .label { font-size: 12px; color: var(--text-sub); font-weight: 600; }
         .next-info h4 { font-size: 16px; font-weight: 700; }
@@ -653,6 +727,7 @@
             justify-content: space-between;
             border-bottom: 1px solid #333;
         }
+        body.light-mode .free-mode-header { border-color: #ddd; }
         .free-mode-header h1 { font-size: 18px; font-weight: 700; }
         .free-mode-header .close-btn {
             width: 36px;
@@ -664,18 +739,22 @@
             cursor: pointer;
             color: var(--text);
         }
+        body.light-mode .free-mode-header .close-btn { background: #e8e8e8; }
 
         .free-mode-stats {
             display: flex;
             gap: 12px;
             padding: 12px 20px;
             background: #111;
+            overflow-x: auto;
         }
+        body.light-mode .free-mode-stats { background: #e8e8e8; }
         .stat-item {
             padding: 8px 14px;
             background: var(--card);
             border-radius: 10px;
             font-size: 13px;
+            white-space: nowrap;
         }
         .stat-item strong { color: var(--primary); }
 
@@ -696,8 +775,10 @@
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .modal-handle { width: 36px; height: 4px; background: #444; border-radius: 2px; margin: 10px auto; }
+        body.light-mode .modal-handle { background: #ccc; }
         .modal-content { padding: 0 20px 32px; }
 
         .modal-photo {
@@ -712,6 +793,9 @@
             margin-bottom: 20px;
             position: relative;
         }
+        body.light-mode .modal-photo {
+            background: linear-gradient(135deg, #e8e8e8, #d8d8d8);
+        }
         .modal-status {
             position: absolute;
             bottom: 12px;
@@ -720,6 +804,7 @@
             border-radius: 10px;
             font-size: 14px;
             font-weight: 700;
+            color: #fff;
         }
         .modal-status.open { background: var(--success); }
         .modal-status.closed { background: var(--danger); }
@@ -729,6 +814,7 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 8px;
+            flex-wrap: wrap;
         }
         .modal-title { font-size: 24px; font-weight: 800; }
 
@@ -739,6 +825,7 @@
             font-size: 14px;
             color: var(--text-sub);
             margin-bottom: 16px;
+            flex-wrap: wrap;
         }
 
         .modal-genres {
@@ -754,6 +841,7 @@
             overflow: hidden;
             margin-bottom: 20px;
         }
+        body.light-mode .modal-info { background: #e8e8e8; }
         .modal-info-row {
             display: flex;
             align-items: center;
@@ -762,22 +850,81 @@
             border-bottom: 1px solid #333;
             font-size: 15px;
         }
+        body.light-mode .modal-info-row { border-color: #ddd; }
         .modal-info-row:last-child { border-bottom: none; }
         .modal-info-row .icon { font-size: 18px; width: 24px; text-align: center; }
 
-        .modal-actions { display: flex; gap: 10px; }
+        /* 한줄평 */
+        .review-section {
+            margin-bottom: 20px;
+        }
+        .review-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-sub);
+            margin-bottom: 12px;
+        }
+        .review-input-wrap {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .review-input {
+            flex: 1;
+            padding: 12px 16px;
+            background: #262628;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            color: var(--text);
+        }
+        body.light-mode .review-input { background: #e8e8e8; }
+        .review-input::placeholder { color: var(--text-sub); }
+        .review-submit {
+            padding: 12px 16px;
+            background: var(--primary);
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+        }
+        .review-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .review-item {
+            padding: 12px;
+            background: #262628;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+        body.light-mode .review-item { background: #e8e8e8; }
+        .review-item .date {
+            font-size: 11px;
+            color: var(--text-sub);
+            margin-top: 4px;
+        }
+
+        .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .modal-btn {
             flex: 1;
+            min-width: 100px;
             padding: 16px;
             border: none;
             border-radius: 14px;
             font-size: 16px;
             font-weight: 700;
             cursor: pointer;
+            color: #fff;
         }
-        .modal-btn.primary { background: var(--primary); color: #fff; }
-        .modal-btn.secondary { background: #333; color: #fff; }
-        .modal-btn.success { background: var(--success); color: #fff; }
+        .modal-btn.primary { background: var(--primary); }
+        .modal-btn.secondary { background: #333; }
+        body.light-mode .modal-btn.secondary { background: #ddd; color: #000; }
+        .modal-btn.success { background: var(--success); }
+        .modal-btn.danger { background: var(--danger); }
 
         /* 완료 화면 */
         .complete-screen {
@@ -787,6 +934,7 @@
             z-index: 150;
             display: none;
             flex-direction: column;
+            overflow: hidden;
         }
         .complete-screen.show { display: flex; }
 
@@ -794,13 +942,16 @@
             padding: 20px;
             text-align: center;
             border-bottom: 1px solid #222;
+            flex-shrink: 0;
         }
+        body.light-mode .complete-header { border-color: #ddd; }
         .complete-header h2 { font-size: 24px; font-weight: 800; }
         .complete-header p { font-size: 14px; color: var(--text-sub); margin-top: 4px; }
 
         .complete-content {
             flex: 1;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
             padding: 20px;
         }
 
@@ -830,7 +981,9 @@
         .complete-footer {
             padding: 16px 20px 32px;
             border-top: 1px solid #222;
+            flex-shrink: 0;
         }
+        body.light-mode .complete-footer { border-color: #ddd; }
 
         .complete-btn {
             width: 100%;
@@ -841,9 +994,11 @@
             font-weight: 700;
             cursor: pointer;
             margin-bottom: 10px;
+            color: #fff;
         }
-        .complete-btn.primary { background: var(--primary); color: #fff; }
-        .complete-btn.secondary { background: #333; color: #fff; }
+        .complete-btn.primary { background: var(--primary); }
+        .complete-btn.secondary { background: #333; }
+        body.light-mode .complete-btn.secondary { background: #ddd; color: #000; }
 
         .toast {
             position: fixed;
@@ -857,7 +1012,9 @@
             font-weight: 600;
             z-index: 500;
             display: none;
+            color: #fff;
         }
+        body.light-mode .toast { background: #333; }
         .toast.show { display: block; }
     </style>
 </head>
@@ -865,6 +1022,9 @@
 
 <!-- 인트로 -->
 <div class="intro" id="intro">
+    <div class="intro-top">
+        <button class="theme-toggle" onclick="toggleTheme()">🌙 다크모드</button>
+    </div>
     <div class="intro-content">
         <div class="intro-emoji">🎭</div>
         <h1 class="intro-title">
@@ -932,6 +1092,7 @@
     <div class="map-container">
         <div id="map"></div>
         <div class="map-status" id="mapStatus"></div>
+        <button class="map-btn theme-btn" onclick="toggleTheme()">🌙</button>
         <button class="map-btn loc-btn" onclick="goToMyLocation()">📍</button>
         <div class="next-preview" id="nextPreview"></div>
     </div>
@@ -946,6 +1107,7 @@
     <div class="free-mode-stats" id="freeStats"></div>
     <div class="map-container">
         <div id="freeMap" style="width:100%;height:100%;"></div>
+        <button class="map-btn theme-btn" onclick="toggleTheme()">🌙</button>
         <button class="map-btn loc-btn" onclick="goToMyLocationFree()">📍</button>
     </div>
 </div>
@@ -976,9 +1138,9 @@
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOht0k-HMZ1V2kLPMj3Ho627PGoNgWkAg&callback=initApp&language=ko" async defer></script>
 
 <script>
-// 가게 데이터
+// 가게 데이터 - AK플라자 좌표 수정 (홍대입구역 4번출구 위)
 const shops = [
-    {id:1, name:"애니메이트 홍대점", address:"AK플라자 5층", hours:"11:00-21:40", lat:37.557048, lng:126.924017, icon:"🎭", type:"종합", genres:["앙스타","블루록","피규어","여성향","남성향"]},
+    {id:1, name:"애니메이트 홍대점", address:"AK플라자 5층", hours:"11:00-21:40", lat:37.55658, lng:126.92366, icon:"🎭", type:"종합", genres:["앙스타","블루록","피규어","여성향","남성향"]},
     {id:2, name:"모와즐", address:"와우산로21길 28", hours:"12:00-20:00", lat:37.55211, lng:126.92094, icon:"💖", type:"여성향", genres:["앙스타","블루록","진격","이치방쿠지"]},
     {id:3, name:"최애굿즈", address:"잔다리로 13 B1", hours:"12:00-21:00", lat:37.55330, lng:126.92100, icon:"💝", type:"중고", genres:["앙스타","여성향","중고"]},
     {id:4, name:"시로상점", address:"와우산로29길 B1", hours:"12:00-21:00", lat:37.55269, lng:126.92152, icon:"✨", type:"종합", genres:["트렌드","가챠","여성향","남성향"]},
@@ -995,14 +1157,14 @@ const shops = [
     {id:15, name:"케이북스", address:"EXIT홍대 B1", hours:"12:00-21:00", lat:37.55704, lng:126.92377, icon:"📚", type:"중고", genres:["중고","동인지","회지"]},
     {id:16, name:"브라더굿즈", address:"와우산로 94", hours:"12:00-20:00", lat:37.55403, lng:126.92181, icon:"⚽", type:"종합", genres:["블루록","주술회전","산리오","니케"]},
     {id:17, name:"피규어프레소 FP", address:"와우산로29길 48-11", hours:"12:00-21:00", lat:37.55146, lng:126.92181, icon:"🎪", type:"피규어", genres:["제일복권","피규어"]},
-    {id:18, name:"스페이스 우라라", address:"홍대입구역 지하", hours:"12:00-21:00", lat:37.55703, lng:126.92410, icon:"🚇", type:"종합", genres:["이치방쿠지","에반게리온"]},
-    {id:19, name:"원피규어", address:"홍익로6길 14 2층", hours:"12:00-22:00", lat:37.55517, lng:126.92455, icon:"🎯", type:"피규어", genres:["피규어","파라라이","입문"]},
-    {id:20, name:"오모차랜드 2호점", address:"홍대입구역 지하", hours:"12:00-21:00", lat:37.55703, lng:126.92402, icon:"🎪", type:"중고", genres:["앙스타","여성향","중고"]},
+    {id:18, name:"스페이스 우라라", address:"홍대입구역 지하", hours:"12:00-21:00", lat:37.55680, lng:126.92350, icon:"🚇", type:"종합", genres:["이치방쿠지","에반게리온"]},
+    {id:19, name:"원피규어", address:"홍익로6길 14 2층", hours:"12:00-22:00", lat:37.55530, lng:126.92440, icon:"🎯", type:"피규어", genres:["피규어","파라라이","입문"]},
+    {id:20, name:"오모차랜드 2호점", address:"홍대입구역 지하", hours:"12:00-21:00", lat:37.55690, lng:126.92380, icon:"🎪", type:"중고", genres:["앙스타","여성향","중고"]},
     {id:21, name:"두니부", address:"와우산로13길 49", hours:"12:00-20:00", lat:37.55147, lng:126.92068, icon:"🎸", type:"종합", genres:["케이온","마마마","고전"]},
     {id:22, name:"아이노모노", address:"잔다리로6길 36", hours:"12:00-21:00", lat:37.55430, lng:126.92150, icon:"💫", type:"소품", genres:["캐캐체","걸밴크","희귀장르"]},
     {id:23, name:"애니플라자", address:"와우산로29길 42", hours:"11:00-21:00", lat:37.55264, lng:126.92203, icon:"🎫", type:"남성향", genres:["제일복권","남성향","피규어"]},
     {id:24, name:"피규어프레소 홍대", address:"잔다리로6길 25", hours:"12:00-21:00", lat:37.55352, lng:126.92247, icon:"🎰", type:"피규어", genres:["제일복권","피규어"]},
-    {id:25, name:"라신반", address:"AK플라자", hours:"12:00-20:00", lat:37.557048, lng:126.924017, icon:"📖", type:"중고", genres:["포카","회지","캔뱃지"]}
+    {id:25, name:"라신반", address:"AK플라자", hours:"12:00-20:00", lat:37.55658, lng:126.92366, icon:"📖", type:"중고", genres:["포카","회지","캔뱃지"]}
 ];
 
 const questions = [
@@ -1031,12 +1193,40 @@ let currentQuestion = 0;
 let answers = {};
 let recommendedShops = [];
 let currentIndex = 0;
-let sessionVisited = new Set(); // 이번 세션 방문
+let sessionVisited = new Set();
 let tourMode = false;
 let startTime = null;
+let isDarkMode = true;
 
-const STORAGE_KEY = 'hongdae_goods_v3';
-let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"visitedShops":[],"totalVisits":0}');
+const STORAGE_KEY = 'hongdae_goods_v4';
+let savedData = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"visitedShops":[],"totalVisits":0,"reviews":{}}');
+
+// 다크/라이트 모드
+function toggleTheme() {
+    isDarkMode = !isDarkMode;
+    document.body.classList.toggle('light-mode', !isDarkMode);
+    document.querySelectorAll('.theme-toggle, .theme-btn').forEach(btn => {
+        btn.textContent = isDarkMode ? '🌙 다크모드' : '☀️ 라이트모드';
+    });
+    
+    // 지도 스타일 업데이트
+    if (map) updateMapStyle(map);
+    if (freeMap) updateMapStyle(freeMap);
+}
+
+function updateMapStyle(mapInstance) {
+    const darkStyles = [
+        {elementType: "geometry", stylers: [{color: "#1d1d1f"}]},
+        {elementType: "labels.text.fill", stylers: [{color: "#8e8e93"}]},
+        {featureType: "road", elementType: "geometry", stylers: [{color: "#2c2c2e"}]},
+        {featureType: "poi", stylers: [{visibility: "off"}]},
+        {featureType: "water", stylers: [{color: "#0e0e0e"}]}
+    ];
+    const lightStyles = [
+        {featureType: "poi", stylers: [{visibility: "off"}]}
+    ];
+    mapInstance.setOptions({ styles: isDarkMode ? darkStyles : lightStyles });
+}
 
 // 유틸
 function calcDist(lat1, lng1, lat2, lng2) {
@@ -1082,9 +1272,7 @@ function getShopStatus(shop) {
     return { status: 'open', text: '영업중' };
 }
 
-function isVisited(shopId) {
-    return savedData.visitedShops.includes(shopId);
-}
+function isVisited(shopId) { return savedData.visitedShops.includes(shopId); }
 
 function markVisited(shopId) {
     if (!savedData.visitedShops.includes(shopId)) {
@@ -1094,9 +1282,12 @@ function markVisited(shopId) {
     sessionVisited.add(shopId);
 }
 
-function unmarkVisited(shopId) {
-    sessionVisited.delete(shopId);
+function unmarkVisitedPermanent(shopId) {
+    savedData.visitedShops = savedData.visitedShops.filter(id => id !== shopId);
+    saveData();
 }
+
+function unmarkVisited(shopId) { sessionVisited.delete(shopId); }
 
 function showToast(msg) {
     const t = document.getElementById('toast');
@@ -1106,6 +1297,19 @@ function showToast(msg) {
 }
 
 function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(savedData)); }
+
+// 한줄평
+function getReviews(shopId) { return savedData.reviews[shopId] || []; }
+
+function addReview(shopId, text) {
+    if (!savedData.reviews[shopId]) savedData.reviews[shopId] = [];
+    savedData.reviews[shopId].unshift({
+        text,
+        date: new Date().toLocaleDateString('ko-KR')
+    });
+    if (savedData.reviews[shopId].length > 10) savedData.reviews[shopId].pop();
+    saveData();
+}
 
 // 인트로
 function startOnboarding() {
@@ -1121,17 +1325,16 @@ function startFreeMode() {
     
     updateFreeStats();
     
-    // 지도 초기화 딜레이
     setTimeout(() => {
         initFreeMap();
-        // 추가 딜레이 후 리사이즈
         setTimeout(() => {
             if (freeMap) {
                 google.maps.event.trigger(freeMap, 'resize');
-                freeMap.setCenter({lat: 37.556, lng: 126.923});
+                freeMap.setCenter({lat: 37.555, lng: 126.922});
+                freeMap.setZoom(16);
             }
-        }, 200);
-    }, 300);
+        }, 300);
+    }, 100);
 }
 
 function closeFreeMode() {
@@ -1197,7 +1400,6 @@ function generateRecommendation() {
     let title = '', desc = '', reasons = [];
     let filtered = [];
     
-    // 이미 방문한 곳 제외
     const unvisited = shops.filter(s => !isVisited(s.id));
     
     if (genre === 'figure') {
@@ -1228,17 +1430,13 @@ function generateRecommendation() {
         reasons.push('숨은 맛집/중고샵 포함');
     }
 
-    // 방문 안 한 곳 우선
-    if (savedData.visitedShops.length > 0) {
-        reasons.push('이미 간 곳은 제외했어요');
-    }
+    if (savedData.visitedShops.length > 0) reasons.push('이미 간 곳은 제외했어요');
 
     if (filtered.length < 5) {
         const remaining = unvisited.filter(s => !filtered.includes(s));
         filtered = [...filtered, ...remaining];
     }
 
-    // 영업중 + 거리순
     filtered.sort((a, b) => {
         const aStatus = getShopStatus(a).status === 'open' ? 0 : 1;
         const bStatus = getShopStatus(b).status === 'open' ? 0 : 1;
@@ -1290,7 +1488,7 @@ function generateRecommendation() {
     document.getElementById('resultScreen').classList.add('show');
 }
 
-// 탐방 시작
+// 탐방
 function startTour() {
     tourMode = true;
     currentIndex = 0;
@@ -1301,13 +1499,12 @@ function startTour() {
     document.getElementById('app').classList.add('show');
     
     setTimeout(() => {
-        google.maps.event.trigger(map, 'resize');
+        if (map) google.maps.event.trigger(map, 'resize');
         updateCurrentDest();
         updateMap();
     }, 100);
 }
 
-// 현재 목적지
 function updateCurrentDest() {
     const shop = recommendedShops[currentIndex];
     const next = recommendedShops[currentIndex + 1];
@@ -1381,9 +1578,7 @@ function completeShop() {
     updateCurrentDest();
     updateMap();
     
-    // 모두 완료 체크
-    const allDone = recommendedShops.every(s => sessionVisited.has(s.id));
-    if (allDone) {
+    if (recommendedShops.every(s => sessionVisited.has(s.id))) {
         setTimeout(() => showComplete(), 500);
     }
 }
@@ -1407,7 +1602,6 @@ function nextShop() {
 
 function showComplete() {
     const visitedList = recommendedShops.filter(s => sessionVisited.has(s.id));
-    
     savedData.totalVisits++;
     saveData();
     
@@ -1437,27 +1631,30 @@ function viewAllMap() {
         setTimeout(() => {
             if (freeMap) {
                 google.maps.event.trigger(freeMap, 'resize');
-                freeMap.setCenter({lat: 37.556, lng: 126.923});
+                freeMap.setCenter({lat: 37.555, lng: 126.922});
+                freeMap.setZoom(16);
             }
-        }, 200);
-    }, 300);
+        }, 300);
+    }, 100);
 }
 
 // 지도
+const darkMapStyles = [
+    {elementType: "geometry", stylers: [{color: "#1d1d1f"}]},
+    {elementType: "labels.text.fill", stylers: [{color: "#8e8e93"}]},
+    {featureType: "road", elementType: "geometry", stylers: [{color: "#2c2c2e"}]},
+    {featureType: "poi", stylers: [{visibility: "off"}]},
+    {featureType: "water", stylers: [{color: "#0e0e0e"}]}
+];
+
 function initApp() {
     map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 37.556, lng: 126.923},
+        center: {lat: 37.555, lng: 126.922},
         zoom: 16,
         disableDefaultUI: true,
         zoomControl: true,
         gestureHandling: 'greedy',
-        styles: [
-            {elementType: "geometry", stylers: [{color: "#1d1d1f"}]},
-            {elementType: "labels.text.fill", stylers: [{color: "#8e8e93"}]},
-            {featureType: "road", elementType: "geometry", stylers: [{color: "#2c2c2e"}]},
-            {featureType: "poi", stylers: [{visibility: "off"}]},
-            {featureType: "water", stylers: [{color: "#0e0e0e"}]}
-        ]
+        styles: darkMapStyles
     });
     startTracking();
 }
@@ -1466,31 +1663,21 @@ function initFreeMap() {
     const mapDiv = document.getElementById('freeMap');
     if (!mapDiv) return;
     
-    // 지도가 이미 있으면 마커만 업데이트
     if (freeMap) {
         updateFreeMap();
         return;
     }
     
     freeMap = new google.maps.Map(mapDiv, {
-        center: {lat: 37.556, lng: 126.923},
-        zoom: 15,
+        center: {lat: 37.555, lng: 126.922},
+        zoom: 16,
         disableDefaultUI: true,
         zoomControl: true,
         gestureHandling: 'greedy',
-        styles: [
-            {elementType: "geometry", stylers: [{color: "#1d1d1f"}]},
-            {elementType: "labels.text.fill", stylers: [{color: "#8e8e93"}]},
-            {featureType: "road", elementType: "geometry", stylers: [{color: "#2c2c2e"}]},
-            {featureType: "poi", stylers: [{visibility: "off"}]},
-            {featureType: "water", stylers: [{color: "#0e0e0e"}]}
-        ]
+        styles: isDarkMode ? darkMapStyles : [{featureType: "poi", stylers: [{visibility: "off"}]}]
     });
     
-    // 지도 로드 완료 후 마커 추가
-    google.maps.event.addListenerOnce(freeMap, 'idle', function() {
-        updateFreeMap();
-    });
+    google.maps.event.addListenerOnce(freeMap, 'idle', () => updateFreeMap());
 }
 
 function updateFreeStats() {
@@ -1504,6 +1691,11 @@ function updateFreeStats() {
 }
 
 function updateFreeMap() {
+    if (!freeMap) return;
+    
+    if (window.freeMarkers) window.freeMarkers.forEach(m => m.setMap(null));
+    window.freeMarkers = [];
+    
     const bounds = new google.maps.LatLngBounds();
     
     shops.forEach(shop => {
@@ -1515,17 +1707,19 @@ function updateFreeMap() {
             map: freeMap,
             icon: {
                 url: `data:image/svg+xml,${encodeURIComponent(`
-                    <svg width="44" height="52" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="22" cy="22" r="20" fill="${visited ? '#30d158' : status.status === 'open' ? '#333' : '#1a1a1a'}" stroke="${visited ? '#30d158' : status.status === 'open' ? '#fff' : '#666'}" stroke-width="2"/>
-                        <text x="22" y="29" font-size="20" text-anchor="middle">${visited ? '✓' : shop.icon}</text>
+                    <svg width="40" height="48" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="20" cy="20" r="18" fill="${visited ? '#30d158' : status.status === 'open' ? '#333' : '#666'}" stroke="${visited ? '#fff' : status.status === 'open' ? '#fff' : '#999'}" stroke-width="2"/>
+                        <text x="20" y="27" font-size="16" text-anchor="middle">${visited ? '✓' : shop.icon}</text>
                     </svg>
                 `)}`,
-                scaledSize: new google.maps.Size(44, 52),
-                anchor: new google.maps.Point(22, 26)
-            }
+                scaledSize: new google.maps.Size(40, 48),
+                anchor: new google.maps.Point(20, 24)
+            },
+            zIndex: visited ? 100 : 200
         });
         
         marker.addListener('click', () => openModal(shop.id));
+        window.freeMarkers.push(marker);
         bounds.extend({lat: shop.lat, lng: shop.lng});
     });
     
@@ -1538,10 +1732,11 @@ function updateFreeMap() {
                 icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#007aff', fillOpacity: 1, strokeColor: '#fff', strokeWeight: 3 },
                 zIndex: 1000
             });
+        } else {
+            freeUserMarker.setMap(freeMap);
+            freeUserMarker.setPosition(userLocation);
         }
     }
-    
-    freeMap.fitBounds(bounds, 50);
 }
 
 function startTracking() {
@@ -1551,7 +1746,7 @@ function startTracking() {
             userLocation = {lat: pos.coords.latitude, lng: pos.coords.longitude};
             updateDistances();
             
-            if (!userMarker && map) {
+            if (map && !userMarker) {
                 userMarker = new google.maps.Marker({
                     position: userLocation,
                     map,
@@ -1563,7 +1758,6 @@ function startTracking() {
             }
             
             if (freeUserMarker) freeUserMarker.setPosition(userLocation);
-            
             if (tourMode) updateCurrentDest();
         },
         () => {},
@@ -1572,6 +1766,7 @@ function startTracking() {
 }
 
 function updateMap() {
+    if (!map) return;
     if (window.shopMarkers) window.shopMarkers.forEach(m => m.setMap(null));
     if (window.routeLine) window.routeLine.setMap(null);
     window.shopMarkers = [];
@@ -1633,6 +1828,7 @@ function openModal(shopId) {
     if (!shop) return;
     const status = getShopStatus(shop);
     const visited = isVisited(shop.id);
+    const reviews = getReviews(shop.id);
     
     document.getElementById('modalContent').innerHTML = `
         <div class="modal-photo">
@@ -1660,22 +1856,55 @@ function openModal(shopId) {
             ${shop.distText ? `<div class="modal-info-row"><span class="icon">📍</span>${shop.distText}</div>` : ''}
         </div>
         
+        <div class="review-section">
+            <div class="review-title">💬 한줄평</div>
+            <div class="review-input-wrap">
+                <input type="text" class="review-input" id="reviewInput" placeholder="한줄평을 남겨보세요" maxlength="50">
+                <button class="review-submit" onclick="submitReview(${shop.id})">등록</button>
+            </div>
+            <div class="review-list">
+                ${reviews.length > 0 ? reviews.map(r => `
+                    <div class="review-item">
+                        ${r.text}
+                        <div class="date">${r.date}</div>
+                    </div>
+                `).join('') : '<div style="color:var(--text-sub);font-size:13px;">아직 한줄평이 없어요</div>'}
+            </div>
+        </div>
+        
         <div class="modal-actions">
             <button class="modal-btn secondary" onclick="closeModal()">닫기</button>
-            ${visited ? '' : `<button class="modal-btn success" onclick="markVisitedFromModal(${shop.id})">✓ 방문 완료</button>`}
+            ${visited 
+                ? `<button class="modal-btn danger" onclick="unmarkVisitedFromModal(${shop.id})">방문 취소</button>`
+                : `<button class="modal-btn success" onclick="markVisitedFromModal(${shop.id})">✓ 방문 완료</button>`
+            }
         </div>
     `;
     document.getElementById('modal').classList.add('show');
+}
+
+function submitReview(shopId) {
+    const input = document.getElementById('reviewInput');
+    const text = input.value.trim();
+    if (!text) return;
+    
+    addReview(shopId, text);
+    showToast('💬 한줄평 등록됨');
+    openModal(shopId); // 새로고침
 }
 
 function markVisitedFromModal(shopId) {
     markVisited(shopId);
     showToast('✓ 방문 완료로 저장됨');
     closeModal();
-    if (freeMap) {
-        updateFreeMap();
-        updateFreeStats();
-    }
+    if (freeMap) { updateFreeMap(); updateFreeStats(); }
+}
+
+function unmarkVisitedFromModal(shopId) {
+    unmarkVisitedPermanent(shopId);
+    showToast('↩ 방문 기록 삭제됨');
+    closeModal();
+    if (freeMap) { updateFreeMap(); updateFreeStats(); }
 }
 
 function closeModal(e) {
