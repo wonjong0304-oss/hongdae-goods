@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>홍대 굿즈샵</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
+        :root { --bg: #0a0a0f; --card: #1c1c1e; --text: #fff; --text-sub: #8e8e93; --primary: #007aff; --success: #30d158; --danger: #ff453a; --warning: #ff9f0a; }
+        body.light-mode { --bg: #f2f2f7; --card: #fff; --text: #000; --text-sub: #6e6e73; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; line-height: 1.4; }
+
+        .global-theme { position: fixed; top: 16px; right: 16px; z-index: 999; padding: 8px 12px; background: var(--card); border: none; border-radius: 20px; font-size: 14px; color: var(--text); cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3); }
+
+        .intro { position: fixed; inset: 0; background: linear-gradient(180deg, #0a0a1a, #1a1a2e, #0a0a0f); z-index: 300; display: flex; flex-direction: column; padding: 60px 24px 40px; overflow-y: auto; }
+        body.light-mode .intro { background: linear-gradient(180deg, #e8e8f0, #d8d8e8, #f2f2f7); }
+        .intro.hide { display: none; }
+        .intro-content { flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 400px; margin: 0 auto; width: 100%; }
+        .intro-emoji { font-size: 64px; margin-bottom: 24px; }
+        .intro-title { font-size: 28px; font-weight: 800; line-height: 1.3; margin-bottom: 28px; }
+        .intro-title .hl { color: var(--primary); }
+        .benefits { display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        .benefit { display: flex; align-items: center; gap: 12px; padding: 14px; background: rgba(255,255,255,0.05); border-radius: 12px; }
+        body.light-mode .benefit { background: rgba(0,0,0,0.03); }
+        .benefit-icon { width: 40px; height: 40px; background: linear-gradient(135deg, var(--primary), #5856d6); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .benefit-text .main { font-size: 15px; font-weight: 700; }
+        .benefit-text .sub { font-size: 12px; color: var(--text-sub); }
+        .intro-cta { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 14px; font-size: 17px; font-weight: 700; color: #fff; cursor: pointer; margin-bottom: 10px; }
+        .intro-skip { width: 100%; padding: 14px; background: var(--card); border: none; border-radius: 14px; font-size: 15px; font-weight: 600; color: var(--text); cursor: pointer; }
+        .intro-footer { text-align: center; font-size: 12px; color: var(--text-sub); margin-top: 16px; }
+
+        .onboarding { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: none; flex-direction: column; overflow-y: auto; }
+        .onboarding.show { display: flex; }
+        .ob-header { padding: 20px; display: flex; align-items: center; gap: 16px; }
+        .progress-bar { flex: 1; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; }
+        body.light-mode .progress-bar { background: rgba(0,0,0,0.1); }
+        .progress-fill { height: 100%; background: var(--primary); border-radius: 2px; transition: width 0.3s; }
+        .skip-btn { font-size: 14px; color: var(--text-sub); background: none; border: none; cursor: pointer; }
+        .ob-content { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px 24px 40px; max-width: 500px; margin: 0 auto; width: 100%; }
+        .q-num { font-size: 13px; color: var(--primary); font-weight: 700; margin-bottom: 10px; }
+        .q-text { font-size: 24px; font-weight: 800; margin-bottom: 28px; }
+        .options { display: flex; flex-direction: column; gap: 10px; }
+        .opt-btn { padding: 16px; background: var(--card); border: 2px solid rgba(255,255,255,0.1); border-radius: 14px; font-size: 15px; font-weight: 600; color: var(--text); text-align: left; cursor: pointer; display: flex; align-items: center; gap: 12px; transition: all 0.2s; }
+        body.light-mode .opt-btn { border-color: rgba(0,0,0,0.1); }
+        .opt-btn.sel { border-color: var(--primary); background: rgba(0,122,255,0.15); }
+        .opt-icon { font-size: 24px; width: 40px; height: 40px; background: rgba(255,255,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+        body.light-mode .opt-icon { background: rgba(0,0,0,0.05); }
+        .opt-btn.sel .opt-icon { background: var(--primary); }
+        .opt-text { flex: 1; }
+        .opt-text .main { display: block; margin-bottom: 2px; }
+        .opt-text .sub { font-size: 12px; color: var(--text-sub); font-weight: 400; }
+
+        .result { position: fixed; inset: 0; background: var(--bg); z-index: 200; display: none; flex-direction: column; }
+        .result.show { display: flex; }
+        .result-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        body.light-mode .result-header { border-color: rgba(0,0,0,0.1); }
+        .back-btn { width: 36px; height: 36px; background: var(--card); border: none; border-radius: 10px; font-size: 18px; cursor: pointer; color: var(--text); }
+        .result-header h1 { font-size: 17px; font-weight: 700; }
+        .result-content { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 180px; }
+        .ai-card { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 16px; padding: 20px; margin-bottom: 20px; }
+        body.light-mode .ai-card { background: linear-gradient(135deg, #e8e8f8, #d8d8f0); }
+        .ai-badge { display: inline-flex; padding: 5px 10px; background: linear-gradient(135deg, #667eea, #764ba2); border-radius: 16px; font-size: 11px; font-weight: 700; color: #fff; margin-bottom: 12px; }
+        .ai-title { font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+        .ai-desc { font-size: 14px; color: var(--text-sub); margin-bottom: 16px; }
+        .ai-reasons { background: rgba(255,255,255,0.05); border-radius: 10px; padding: 14px; }
+        body.light-mode .ai-reasons { background: rgba(0,0,0,0.05); }
+        .ai-reasons-title { font-size: 12px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
+        .reason { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; font-size: 13px; }
+        .reason:last-child { margin-bottom: 0; }
+        .reason-icon { width: 18px; height: 18px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; color: #fff; }
+        .section-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 12px; display: flex; justify-content: space-between; }
+        .shop-count { color: var(--primary); }
+
+        .shop-card { background: var(--card); border-radius: 14px; overflow: hidden; margin-bottom: 10px; cursor: pointer; }
+        .shop-card.first { border: 1px solid rgba(0,122,255,0.3); }
+        .shop-photo { width: 100%; height: 90px; background: linear-gradient(135deg, #2c2c2e, #1c1c1e); display: flex; align-items: center; justify-content: center; font-size: 36px; position: relative; }
+        body.light-mode .shop-photo { background: linear-gradient(135deg, #e8e8e8, #d8d8d8); }
+        .shop-status { position: absolute; top: 8px; left: 8px; padding: 5px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; }
+        .shop-status.open { background: var(--success); color: #fff; }
+        .shop-status.closed { background: var(--danger); color: #fff; }
+        .shop-status.soon { background: var(--warning); color: #000; }
+        .shop-rank { position: absolute; top: 8px; right: 8px; width: 24px; height: 24px; background: var(--primary); border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: #fff; }
+        .shop-body { padding: 12px; }
+        .shop-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .shop-name { font-size: 15px; font-weight: 700; }
+        .shop-type { padding: 2px 6px; background: rgba(167,139,250,0.2); border-radius: 4px; font-size: 10px; font-weight: 600; color: #a78bfa; }
+        .shop-meta { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-sub); margin-bottom: 8px; flex-wrap: wrap; }
+        .shop-genres { display: flex; flex-wrap: wrap; gap: 4px; }
+        .genre-tag { padding: 3px 8px; background: rgba(255,255,255,0.08); border-radius: 4px; font-size: 11px; font-weight: 600; color: #a78bfa; }
+        body.light-mode .genre-tag { background: rgba(0,0,0,0.05); }
+
+        .result-footer { position: fixed; bottom: 0; left: 0; right: 0; padding: 16px 20px 32px; background: var(--bg); border-top: 1px solid rgba(255,255,255,0.1); z-index: 10; }
+        body.light-mode .result-footer { border-color: rgba(0,0,0,0.1); }
+        .start-btn { width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 12px; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer; margin-bottom: 8px; }
+        .secondary-btns { display: flex; gap: 8px; }
+        .sec-btn { flex: 1; padding: 12px; background: var(--card); border: none; border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--text); cursor: pointer; }
+
+        .app { display: none; flex-direction: column; height: 100vh; height: 100dvh; }
+        .app.show { display: flex; }
+        .current-dest { background: var(--card); padding: 16px; border-bottom: 1px solid rgba(255,255,255,0.1); max-height: 40vh; overflow-y: auto; }
+        body.light-mode .current-dest { border-color: rgba(0,0,0,0.1); }
+        .dest-label { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-sub); margin-bottom: 10px; }
+        .live-dot { width: 6px; height: 6px; background: var(--success); border-radius: 50%; animation: blink 1.5s infinite; }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .stamps { display: flex; gap: 4px; margin-left: auto; }
+        .stamp { width: 22px; height: 22px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; }
+        body.light-mode .stamp { background: rgba(0,0,0,0.1); }
+        .stamp.done { background: var(--success); color: #fff; }
+        .stamp.current { background: var(--primary); color: #fff; }
+        .dest-shop { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+        .dest-photo { width: 56px; height: 56px; background: rgba(0,122,255,0.2); border: 2px solid var(--primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+        .dest-info { flex: 1; }
+        .dest-info h2 { font-size: 18px; font-weight: 800; margin-bottom: 2px; }
+        .dest-info p { font-size: 13px; color: var(--text-sub); }
+        .dest-walk { padding: 6px 12px; background: var(--primary); border-radius: 16px; font-size: 14px; font-weight: 700; color: #fff; }
+        .dest-status-bar { display: flex; align-items: center; gap: 10px; padding: 10px 12px; background: rgba(255,255,255,0.05); border-radius: 10px; margin-bottom: 10px; }
+        body.light-mode .dest-status-bar { background: rgba(0,0,0,0.05); }
+        .dest-status-bar .status { padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 700; color: #fff; }
+        .dest-status-bar .status.open { background: var(--success); }
+        .dest-status-bar .status.closed { background: var(--danger); }
+        .dest-status-bar .hours { font-size: 13px; color: var(--text-sub); }
+        .dest-genres { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px; }
+        .dest-actions { display: flex; gap: 8px; }
+        .action-btn { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; color: #fff; }
+        .action-btn.primary { background: var(--primary); }
+        .action-btn.secondary { background: rgba(255,255,255,0.1); }
+        body.light-mode .action-btn.secondary { background: rgba(0,0,0,0.1); color: var(--text); }
+        .action-btn.success { background: var(--success); }
+        .action-btn.danger { background: var(--danger); }
+
+        .map-container { flex: 1; position: relative; min-height: 200px; }
+        #map, #freeMap { width: 100%; height: 100%; }
+        .map-status { position: absolute; top: 12px; left: 12px; right: 60px; background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); border-radius: 12px; padding: 12px 14px; display: flex; align-items: center; gap: 10px; z-index: 10; }
+        body.light-mode .map-status { background: rgba(255,255,255,0.9); }
+        .map-status-icon { width: 36px; height: 36px; background: var(--primary); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
+        .map-status-text { flex: 1; }
+        .map-status-text .title { font-size: 14px; font-weight: 700; }
+        .map-status-text .sub { font-size: 12px; color: var(--text-sub); }
+        .map-status-badge { padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; color: #fff; }
+        .map-status-badge.open { background: var(--success); }
+        .map-status-badge.closed { background: var(--danger); }
+        .map-btn { position: absolute; width: 44px; height: 44px; background: var(--card); border: none; border-radius: 50%; font-size: 20px; cursor: pointer; box-shadow: 0 2px 10px rgba(0,0,0,0.3); z-index: 10; }
+        .loc-btn { bottom: 90px; right: 12px; }
+        .next-preview { position: absolute; bottom: 12px; left: 12px; right: 12px; background: var(--card); border-radius: 14px; padding: 14px; display: flex; align-items: center; gap: 12px; box-shadow: 0 2px 15px rgba(0,0,0,0.3); z-index: 10; }
+        .next-icon { width: 44px; height: 44px; background: rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        body.light-mode .next-icon { background: rgba(0,0,0,0.05); }
+        .next-info { flex: 1; }
+        .next-info .label { font-size: 11px; color: var(--text-sub); font-weight: 600; }
+        .next-info h4 { font-size: 15px; font-weight: 700; }
+        .next-walk { font-size: 14px; font-weight: 700; color: var(--primary); }
+
+        .free-header { background: var(--card); padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        body.light-mode .free-header { border-color: rgba(0,0,0,0.1); }
+        .free-header h1 { font-size: 17px; font-weight: 700; }
+        .free-header .close-btn { width: 32px; height: 32px; background: rgba(255,255,255,0.1); border: none; border-radius: 8px; font-size: 16px; cursor: pointer; color: var(--text); }
+        body.light-mode .free-header .close-btn { background: rgba(0,0,0,0.05); }
+        .toolbar { background: var(--bg); padding: 10px 16px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        body.light-mode .toolbar { border-color: rgba(0,0,0,0.05); }
+        .filter-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; }
+        .filter-row::-webkit-scrollbar { display: none; }
+        .filter-chip { padding: 6px 12px; background: var(--card); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; font-size: 12px; font-weight: 600; color: var(--text); cursor: pointer; white-space: nowrap; }
+        body.light-mode .filter-chip { border-color: rgba(0,0,0,0.1); }
+        .filter-chip.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+        .stats-row { display: flex; gap: 12px; font-size: 12px; color: var(--text-sub); align-items: center; }
+        .stats-row strong { color: var(--primary); }
+        .reset-btn { margin-left: auto; padding: 4px 10px; background: var(--danger); border: none; border-radius: 8px; font-size: 11px; font-weight: 600; color: #fff; cursor: pointer; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 500; display: none; align-items: flex-end; }
+        .modal-overlay.show { display: flex; }
+        .modal { background: var(--card); border-radius: 20px 20px 0 0; width: 100%; max-height: 85vh; overflow-y: auto; }
+        .modal-handle { width: 32px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; margin: 8px auto; }
+        body.light-mode .modal-handle { background: rgba(0,0,0,0.2); }
+        .modal-content { padding: 0 16px 28px; }
+        .modal-photo { width: 100%; height: 120px; background: linear-gradient(135deg, #2c2c2e, #1c1c1e); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 48px; margin-bottom: 16px; position: relative; }
+        body.light-mode .modal-photo { background: linear-gradient(135deg, #e8e8e8, #d8d8d8); }
+        .modal-status { position: absolute; bottom: 10px; left: 10px; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 700; color: #fff; }
+        .modal-status.open { background: var(--success); }
+        .modal-status.closed { background: var(--danger); }
+        .modal-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+        .modal-title { font-size: 22px; font-weight: 800; }
+        .modal-meta { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--text-sub); margin-bottom: 12px; flex-wrap: wrap; }
+        .modal-genres { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .modal-info { background: rgba(255,255,255,0.05); border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
+        body.light-mode .modal-info { background: rgba(0,0,0,0.05); }
+        .modal-info-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+        body.light-mode .modal-info-row { border-color: rgba(0,0,0,0.05); }
+        .modal-info-row:last-child { border-bottom: none; }
+        .modal-info-row .icon { font-size: 16px; width: 20px; text-align: center; }
+        .review-section { margin-bottom: 16px; }
+        .review-title { font-size: 13px; font-weight: 700; color: var(--text-sub); margin-bottom: 10px; }
+        .review-input-wrap { display: flex; gap: 8px; margin-bottom: 10px; }
+        .review-input { flex: 1; padding: 10px 14px; background: rgba(255,255,255,0.05); border: none; border-radius: 10px; font-size: 14px; color: var(--text); }
+        body.light-mode .review-input { background: rgba(0,0,0,0.05); }
+        .review-input::placeholder { color: var(--text-sub); }
+        .review-submit { padding: 10px 14px; background: var(--primary); border: none; border-radius: 10px; font-size: 13px; font-weight: 700; color: #fff; cursor: pointer; }
+        .review-list { display: flex; flex-direction: column; gap: 6px; }
+        .review-item { padding: 10px 12px; background: rgba(255,255,255,0.05); border-radius: 8px; font-size: 13px; }
+        body.light-mode .review-item { background: rgba(0,0,0,0.05); }
+        .review-item .date { font-size: 10px; color: var(--text-sub); margin-top: 4px; }
+        .modal-actions { display: flex; gap: 8px; }
+        .modal-btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; color: #fff; }
+        .modal-btn.primary { background: var(--primary); }
+        .modal-btn.secondary { background: rgba(255,255,255,0.1); }
+        body.light-mode .modal-btn.secondary { background: rgba(0,0,0,0.1); color: var(--text); }
+        .modal-btn.success { background: var(--success); }
+        .modal-btn.danger { background: var(--danger); }
+
+        .complete { position: fixed; inset: 0; background: var(--bg); z-index: 150; display: none; flex-direction: column; }
+        .complete.show { display: flex; }
+        .complete-header { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        body.light-mode .complete-header { border-color: rgba(0,0,0,0.1); }
+        .complete-header h2 { font-size: 22px; font-weight: 800; }
+        .complete-header p { font-size: 13px; color: var(--text-sub); margin-top: 4px; }
+        .complete-content { flex: 1; overflow-y: auto; padding: 16px; }
+        .complete-card { background: var(--card); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+        .complete-icon { width: 48px; height: 48px; background: var(--success); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .complete-info { flex: 1; }
+        .complete-info h3 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+        .complete-info p { font-size: 12px; color: var(--text-sub); }
+        .complete-footer { padding: 16px 20px 32px; border-top: 1px solid rgba(255,255,255,0.1); }
+        body.light-mode .complete-footer { border-color: rgba(0,0,0,0.1); }
+        .complete-btn { width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; margin-bottom: 8px; color: #fff; }
+        .complete-btn.primary { background: var(--primary); }
+        .complete-btn.secondary { background: rgba(255,255,255,0.1); }
+        body.light-mode .complete-btn.secondary { background: rgba(0,0,0,0.1); color: var(--text); }
+
+        .toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: #333; padding: 12px 20px; border-radius: 10px; font-size: 14px; font-weight: 600; z-index: 600; display: none; color: #fff; }
+        .toast.show { display: block; }
+    </style>
+</head>
+<body>
+
+<button class="global-theme" id="globalTheme" onclick="toggleTheme()">🌙</button>
+
+<div class="intro" id="intro">
+    <div class="intro-content">
+        <div class="intro-emoji">🎭</div>
+        <h1 class="intro-title">홍대 덕질,<br><span class="hl">어디부터 가야 할지</span><br>막막했다면?</h1>
+        <div class="benefits">
+            <div class="benefit"><div class="benefit-icon">🎯</div><div class="benefit-text"><div class="main">내 취향 맞춤 루트</div><div class="sub">여성향 / 피규어 / 중고 취향별 추천</div></div></div>
+            <div class="benefit"><div class="benefit-icon">⏰</div><div class="benefit-text"><div class="main">영업중인 곳 우선</div><div class="sub">지금 열려있는 가게 먼저 안내</div></div></div>
+            <div class="benefit"><div class="benefit-icon">📍</div><div class="benefit-text"><div class="main">방문 기록 저장</div><div class="sub">다녀온 곳 체크하고 새로운 곳 발견</div></div></div>
+        </div>
+    </div>
+    <button class="intro-cta" onclick="startOnboarding()">🎯 맞춤 코스 추천받기</button>
+    <button class="intro-skip" onclick="startFreeMode()">🗺 자유롭게 둘러보기</button>
+    <div class="intro-footer">25개 굿즈샵 · 마지막 확인 2025.01.19</div>
+</div>
+
+<div class="onboarding" id="onboarding">
+    <div class="ob-header">
+        <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+        <button class="skip-btn" onclick="skipOnboarding()">건너뛰기</button>
+    </div>
+    <div class="ob-content" id="questionContent"></div>
+</div>
+
+<div class="result" id="result">
+    <div class="result-header">
+        <button class="back-btn" onclick="backToOnboarding()">←</button>
+        <h1>맞춤 추천</h1>
+    </div>
+    <div class="result-content" id="resultContent"></div>
+    <div class="result-footer">
+        <button class="start-btn" onclick="startTour()">🚀 탐방 시작</button>
+        <div class="secondary-btns">
+            <button class="sec-btn" onclick="backToOnboarding()">🔄 다시</button>
+            <button class="sec-btn" onclick="shareCourse()">📤 공유</button>
+        </div>
+    </div>
+</div>
+
+<div class="app" id="app">
+    <div class="current-dest" id="currentDest"></div>
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="map-status" id="mapStatus"></div>
+        <div class="next-preview" id="nextPreview"></div>
+    </div>
+</div>
+
+<div class="app" id="freeApp">
+    <div class="free-header">
+        <h1>🗺 전체 굿즈샵</h1>
+        <button class="close-btn" onclick="closeFreeMode()">✕</button>
+    </div>
+    <div class="toolbar">
+        <div class="filter-row" id="filterRow"></div>
+        <div class="stats-row" id="statsRow"></div>
+    </div>
+    <div class="map-container">
+        <div id="freeMap"></div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-handle"></div>
+        <div class="modal-content" id="modalContent"></div>
+    </div>
+</div>
+
+<div class="complete" id="complete">
+    <div class="complete-header">
+        <h2>🎉 탐방 완료!</h2>
+        <p id="completeSubtext"></p>
+    </div>
+    <div class="complete-content" id="completeContent"></div>
+    <div class="complete-footer">
+        <button class="complete-btn primary" onclick="viewAllMap()">🗺 전체 지도</button>
+        <button class="complete-btn secondary" onclick="resetApp()">🔄 처음으로</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDOht0k-HMZ1V2kLPMj3Ho627PGoNgWkAg&callback=initApp&language=ko" async defer></script>
+<script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+
+<script>
+// PDF 기반 정확한 주소로 좌표 수정
+const shops = [
+    {id:1,name:"애니메이트 홍대점",address:"양화로 188 AK플라자 5층",hours:"11:00-21:40",lat:37.55720,lng:126.92340,icon:"🎭",type:"종합",genres:["앙스타","블루록","피규어","여성향","남성향"]},
+    {id:2,name:"애니세카이 홍대점",address:"어울마당로 155-1 완빌딩 2층",hours:"12:00-21:00",lat:37.55270,lng:126.92280,icon:"🎮",type:"종합",genres:["장르다양","연중무휴","2024오픈"]},
+    {id:3,name:"안서당",address:"신촌로6길 17 B1",hours:"12:00-20:00",lat:37.55540,lng:126.92350,icon:"🏪",type:"중고",genres:["캔뱃지","지류","옛날굿즈"]},
+    {id:4,name:"피규어프레소 FP점",address:"와우산로29길 48-11 지하~2층",hours:"12:00-21:00",lat:37.55180,lng:126.92200,icon:"🎪",type:"피규어",genres:["제일복권","피규어","카페"]},
+    {id:5,name:"JS스토어",address:"와우산로29길 48-24 1층",hours:"12:00-20:30",lat:37.55190,lng:126.92210,icon:"🤖",type:"피규어",genres:["에반게리온","단간론파","코드기어스","가챠"]},
+    {id:6,name:"시로상점",address:"와우산로29길 14-12 B1",hours:"12:00-21:00",lat:37.55300,lng:126.92190,icon:"✨",type:"종합",genres:["트렌드","가챠","신상빠름"]},
+    {id:7,name:"모와즐",address:"양화로18안길 12 지층",hours:"12:00-20:00",lat:37.55360,lng:126.92100,icon:"💖",type:"여성향",genres:["앙스타","블루록","이치방쿠지"]},
+    {id:8,name:"피규어프렌즈",address:"양화로18안길 8 지층",hours:"13:00-21:00",lat:37.55350,lng:126.92080,icon:"🎲",type:"피규어",genres:["피규어최다","랜덤깡","지류"]},
+    {id:9,name:"케이북스",address:"양화로 161 EXIT홍대 B1",hours:"12:00-21:00",lat:37.55580,lng:126.92250,icon:"📚",type:"중고",genres:["중고","동인지","희귀템"]},
+    {id:10,name:"더쿠 홍대입구점",address:"홍익로6길 38 B1",hours:"12:00-21:00",lat:37.55500,lng:126.92380,icon:"🎁",type:"종합",genres:["리멘트","앙스타","프세카"]},
+    {id:11,name:"애니플러스 합정",address:"양화로 45 메세나폴리스 B2",hours:"10:00-22:00",lat:37.54960,lng:126.91350,icon:"🏢",type:"종합",genres:["피규어","자체제작","카페"]},
+    {id:12,name:"원피규어",address:"홍익로6길 14 2층",hours:"12:00-22:00",lat:37.55530,lng:126.92440,icon:"🎯",type:"피규어",genres:["피규어","파라라이","입문"]},
+    {id:13,name:"아이노모노",address:"신촌로4길 22-8 1층",hours:"12:00-21:00",lat:37.55420,lng:126.92050,icon:"💫",type:"소품",genres:["캐캐체","걸밴크","가격착함"]},
+    {id:14,name:"두니부",address:"신촌로4길 14 B1",hours:"12:00-20:00",lat:37.55400,lng:126.92030,icon:"🎸",type:"종합",genres:["케이온","마마마","윈브레"]},
+    {id:15,name:"브라더굿즈",address:"신촌로6길 24 2층",hours:"12:00-20:00",lat:37.55560,lng:126.92320,icon:"⚽",type:"종합",genres:["블루록","주술회전","산리오","니케"]},
+    {id:16,name:"최애굿즈 홍대점",address:"신촌로4길 5-21 B1",hours:"12:00-21:00",lat:37.55380,lng:126.92000,icon:"💝",type:"중고",genres:["앙스타","여성향","중고매입"]},
+    {id:17,name:"호에마켓",address:"와우산로29길 48-14",hours:"13:00-19:00",lat:37.55185,lng:126.92205,icon:"🌸",type:"소품",genres:["산리오","원화굿즈","키오스크"]},
+    {id:18,name:"꼬꼬굿즈",address:"와우산로27길 68 3층",hours:"13:00-20:30",lat:37.55268,lng:126.92297,icon:"🏐",type:"종합",genres:["하이큐","주술회전","점프샵"]},
+    {id:19,name:"오모차랜드",address:"홍익로5길 36 2층",hours:"12:00-21:00",lat:37.55480,lng:126.92420,icon:"🎪",type:"중고",genres:["앙스타","중고","도리벤"]},
+    {id:20,name:"오모차랜드 2호점",address:"홍대입구역사 지하",hours:"12:00-21:00",lat:37.55690,lng:126.92380,icon:"🎪",type:"중고",genres:["앙스타","넓음","정모장소"]},
+    {id:21,name:"피규어프레소 홍대점",address:"잔다리로6길 25 2층",hours:"12:00-21:00",lat:37.55352,lng:126.92247,icon:"🎰",type:"피규어",genres:["제일복권","넓은매장"]},
+    {id:22,name:"헬로수미코",address:"월드컵북로1길 26-13 1층",hours:"12:00-20:00",lat:37.55650,lng:126.91950,icon:"🎲",type:"가챠",genres:["가챠전문","신상빠름","인형옷"]},
+    {id:23,name:"라신반 서울본점",address:"양화로 178-5 B1",hours:"12:00-20:00",lat:37.55600,lng:126.92150,icon:"📖",type:"중고",genres:["포카","회지","게임"]},
+    {id:24,name:"스페이스 우라라",address:"양화로 166 미래프라자 B1",hours:"12:00-21:00",lat:37.55550,lng:126.92100,icon:"🚇",type:"종합",genres:["이치방쿠지","에반게리온"]},
+    {id:25,name:"애니플라자",address:"와우산로29라길 7 1층",hours:"11:00-21:00",lat:37.55260,lng:126.92180,icon:"🎫",type:"남성향",genres:["제일복권최다","남성향","피규어"]}
+];
+
+const filterTypes = [{key:'all',label:'전체'},{key:'종합',label:'종합'},{key:'여성향',label:'여성향'},{key:'피규어',label:'피규어'},{key:'중고',label:'중고'},{key:'open',label:'영업중'}];
+const questions = [
+    {text:"어떤 굿즈를 주로 찾아?",options:[{icon:"🤖",main:"피규어 / 복권",sub:"제일복권, 넨도로이드",value:"figure"},{icon:"💖",main:"여성향",sub:"앙스타, 블루록, 하이큐",value:"female"},{icon:"🔥",main:"남성향",sub:"에반게리온, 피규어",value:"male"},{icon:"🌟",main:"다 좋아!",sub:"골고루 구경할래",value:"all"}]},
+    {text:"굿즈샵 경험은?",options:[{icon:"🐣",main:"처음이야",sub:"기본부터",value:"beginner"},{icon:"🐥",main:"몇 번 와봤어",sub:"어느 정도 알아",value:"intermediate"},{icon:"🦅",main:"단골이지",sub:"숨은 맛집",value:"expert"}]}
+];
+
+let map,freeMap,userLocation=null,userMarker=null,freeUserMarker=null,markerCluster=null;
+let currentQuestion=0,answers={},recommendedShops=[],currentIndex=0,sessionVisited=new Set(),tourMode=false,isDarkMode=true,currentFilter='all';
+const STORAGE_KEY='hongdae_goods_v6';
+let savedData=JSON.parse(localStorage.getItem(STORAGE_KEY)||'{"visitedShops":[],"totalVisits":0,"reviews":{}}');
+
+function toggleTheme(){isDarkMode=!isDarkMode;document.body.classList.toggle('light-mode',!isDarkMode);document.getElementById('globalTheme').textContent=isDarkMode?'🌙':'☀️';if(map)updateMapStyle(map);if(freeMap)updateMapStyle(freeMap);}
+function updateMapStyle(m){const dark=[{elementType:"geometry",stylers:[{color:"#1d1d1f"}]},{elementType:"labels.text.fill",stylers:[{color:"#8e8e93"}]},{featureType:"road",elementType:"geometry",stylers:[{color:"#2c2c2e"}]},{featureType:"poi",stylers:[{visibility:"off"}]},{featureType:"water",stylers:[{color:"#0e0e0e"}]}];m.setOptions({styles:isDarkMode?dark:[{featureType:"poi",stylers:[{visibility:"off"}]}]});}
+function calcDist(lat1,lng1,lat2,lng2){const R=6371000,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180,a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
+function formatDist(m){return m<1000?Math.round(m)+'m':(m/1000).toFixed(1)+'km';}
+function formatWalk(m){return Math.max(1,Math.round(m/67))+'분';}
+function updateDistances(){if(!userLocation)return;shops.forEach(s=>{s.dist=calcDist(userLocation.lat,userLocation.lng,s.lat,s.lng);s.distText=formatDist(s.dist);s.walkTime=formatWalk(s.dist);});}
+function getShopStatus(shop){const now=new Date(),mins=now.getHours()*60+now.getMinutes(),[open,close]=shop.hours.split('-'),[oh,om]=open.split(':').map(Number),[ch,cm]=close.split(':').map(Number),openMins=oh*60+om,closeMins=ch*60+cm;if(mins<openMins){const diff=openMins-mins;return diff<=60?{status:'soon',text:`${diff}분 후 오픈`,isOpen:false}:{status:'closed',text:'영업 전',isOpen:false};}if(mins>=closeMins)return{status:'closed',text:'영업 종료',isOpen:false};const remaining=closeMins-mins;return remaining<=60?{status:'open',text:`${remaining}분 후 마감`,isOpen:true}:{status:'open',text:'영업중',isOpen:true};}
+function isVisited(id){return savedData.visitedShops.includes(id);}
+function markVisited(id){if(!savedData.visitedShops.includes(id)){savedData.visitedShops.push(id);saveData();}sessionVisited.add(id);}
+function unmarkVisitedPermanent(id){savedData.visitedShops=savedData.visitedShops.filter(i=>i!==id);saveData();}
+function unmarkVisited(id){sessionVisited.delete(id);}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2000);}
+function saveData(){localStorage.setItem(STORAGE_KEY,JSON.stringify(savedData));}
+function getReviews(id){return savedData.reviews[id]||[];}
+function addReview(id,text){if(!savedData.reviews[id])savedData.reviews[id]=[];savedData.reviews[id].unshift({text,date:new Date().toLocaleDateString('ko-KR')});if(savedData.reviews[id].length>10)savedData.reviews[id].pop();saveData();}
+function getFilteredShops(){return shops.filter(s=>{if(currentFilter==='all')return true;if(currentFilter==='open')return getShopStatus(s).isOpen;return s.type===currentFilter||s.genres.includes(currentFilter);});}
+function resetAllVisited(){if(confirm('모든 방문 기록을 삭제할까요?')){savedData.visitedShops=[];saveData();updateFreeStats();updateFreeMap();showToast('🗑 방문 기록 삭제됨');}}
+
+function startOnboarding(){document.getElementById('intro').classList.add('hide');document.getElementById('onboarding').classList.add('show');currentQuestion=0;renderQuestion();}
+function startFreeMode(){document.getElementById('intro').classList.add('hide');document.getElementById('freeApp').classList.add('show');renderFilterRow();updateFreeStats();setTimeout(()=>{initFreeMap();setTimeout(()=>{if(freeMap){google.maps.event.trigger(freeMap,'resize');freeMap.setCenter({lat:37.554,lng:126.922});freeMap.setZoom(17);}},200);},100);}
+function closeFreeMode(){document.getElementById('freeApp').classList.remove('show');document.getElementById('intro').classList.remove('hide');}
+function renderFilterRow(){document.getElementById('filterRow').innerHTML=filterTypes.map(f=>`<button class="filter-chip ${currentFilter===f.key?'active':''}" onclick="setFilter('${f.key}')">${f.label}</button>`).join('');}
+function setFilter(key){currentFilter=key;renderFilterRow();updateFreeStats();updateFreeMap();}
+function updateFreeStats(){const filtered=getFilteredShops(),visited=filtered.filter(s=>isVisited(s.id)).length,open=filtered.filter(s=>getShopStatus(s).isOpen).length;document.getElementById('statsRow').innerHTML=`<span>표시 <strong>${filtered.length}</strong>곳</span><span>영업중 <strong>${open}</strong>곳</span><span>방문 <strong>${visited}</strong>곳</span>${visited>0?'<button class="reset-btn" onclick="resetAllVisited()">🗑 초기화</button>':''}`;}
+function renderQuestion(){const q=questions[currentQuestion];document.getElementById('progressFill').style.width=((currentQuestion+1)/questions.length*100)+'%';document.getElementById('questionContent').innerHTML=`<div class="q-num">질문 ${currentQuestion+1}/${questions.length}</div><div class="q-text">${q.text}</div><div class="options">${q.options.map((o,i)=>`<button class="opt-btn" onclick="selectOption(${i},'${o.value}')"><div class="opt-icon">${o.icon}</div><div class="opt-text"><span class="main">${o.main}</span><span class="sub">${o.sub}</span></div></button>`).join('')}</div>`;}
+function selectOption(idx,value){document.querySelectorAll('.opt-btn').forEach((b,i)=>b.classList.toggle('sel',i===idx));answers[currentQuestion]=value;setTimeout(()=>{if(currentQuestion<questions.length-1){currentQuestion++;renderQuestion();}else generateRecommendation();},300);}
+function skipOnboarding(){answers={0:'all',1:'beginner'};generateRecommendation();}
+function backToOnboarding(){document.getElementById('result').classList.remove('show');document.getElementById('onboarding').classList.add('show');currentQuestion=0;renderQuestion();}
+
+function generateRecommendation(){document.getElementById('onboarding').classList.remove('show');const genre=answers[0]||'all',level=answers[1]||'beginner';let title='',desc='',reasons=[],filtered=[];const unvisited=shops.filter(s=>!isVisited(s.id));if(genre==='figure'){title='🤖 피규어 헌터 코스';desc='피규어와 복권 찾는 당신을 위한 코스';filtered=unvisited.filter(s=>s.genres.some(g=>['피규어','제일복권','에반게리온','가챠'].includes(g)));reasons=['제일복권 있는 곳 위주','피규어 종류 많은 매장'];}else if(genre==='female'){title='💖 여성향 성지순례';desc='앙스타, 블루록, 하이큐 덕후 코스';filtered=unvisited.filter(s=>s.genres.some(g=>['앙스타','블루록','하이큐','여성향','주술회전'].includes(g)));reasons=['앙스타/블루록 많은 곳','이치방쿠지 가능'];}else if(genre==='male'){title='🔥 남성향 풀코스';desc='남성향 굿즈와 피규어 코스';filtered=unvisited.filter(s=>s.genres.some(g=>['남성향','에반게리온','제일복권'].includes(g)));reasons=['남성향 특화 매장','제일복권 다양'];}else{title='🌟 홍대 굿즈샵 투어';desc='다양한 장르 골고루 즐기는 코스';filtered=unvisited.filter(s=>s.type==='종합');reasons=['종합 매장 위주','규모 큰 곳 우선'];}if(level==='expert'){filtered=[...filtered,...unvisited.filter(s=>s.type==='중고')];reasons.push('숨은 맛집 포함');}if(savedData.visitedShops.length>0)reasons.push('이미 간 곳 제외');reasons.push('영업중인 곳 우선');if(filtered.length<5)filtered=[...filtered,...unvisited.filter(s=>!filtered.includes(s))];filtered.sort((a,b)=>{const aOpen=getShopStatus(a).isOpen?0:1,bOpen=getShopStatus(b).isOpen?0:1;if(aOpen!==bOpen)return aOpen-bOpen;return(a.dist||0)-(b.dist||0);});recommendedShops=filtered.slice(0,5);document.getElementById('resultContent').innerHTML=`<div class="ai-card"><div class="ai-badge">✨ AI 맞춤 추천</div><div class="ai-title">${title}</div><div class="ai-desc">${desc}</div><div class="ai-reasons"><div class="ai-reasons-title">이렇게 추천한 이유</div>${reasons.map(r=>`<div class="reason"><div class="reason-icon">✓</div><span>${r}</span></div>`).join('')}</div></div><div class="section-title"><span>추천 순서</span><span class="shop-count">${recommendedShops.length}곳</span></div>${recommendedShops.map((shop,i)=>{const st=getShopStatus(shop);return`<div class="shop-card ${i===0?'first':''}" onclick="openModal(${shop.id})"><div class="shop-photo">${shop.icon}<div class="shop-status ${st.status}">${st.text}</div><div class="shop-rank">${i+1}</div></div><div class="shop-body"><div class="shop-name-row"><span class="shop-name">${shop.name}</span><span class="shop-type">${shop.type}</span></div><div class="shop-meta"><span>📍 ${shop.address}</span><span>🕐 ${shop.hours}</span>${shop.walkTime?`<span>🚶 ${shop.walkTime}</span>`:''}</div><div class="shop-genres">${shop.genres.slice(0,3).map(g=>`<span class="genre-tag">#${g}</span>`).join('')}</div></div></div>`;}).join('')}`;document.getElementById('result').classList.add('show');}
+
+function startTour(){tourMode=true;currentIndex=0;sessionVisited.clear();document.getElementById('result').classList.remove('show');document.getElementById('app').classList.add('show');setTimeout(()=>{initTourMap();setTimeout(()=>{if(map){google.maps.event.trigger(map,'resize');updateCurrentDest();updateMap();}},100);},100);}
+function initTourMap(){if(map)return;const mapDiv=document.getElementById('map');if(!mapDiv)return;map=new google.maps.Map(mapDiv,{center:{lat:37.554,lng:126.922},zoom:17,disableDefaultUI:true,zoomControl:true,gestureHandling:'greedy',styles:isDarkMode?darkMapStyles:[{featureType:"poi",stylers:[{visibility:"off"}]}]});}
+function updateCurrentDest(){const shop=recommendedShops[currentIndex],next=recommendedShops[currentIndex+1],st=getShopStatus(shop),isCurrentVisited=sessionVisited.has(shop.id);document.getElementById('currentDest').innerHTML=`<div class="dest-label"><span class="live-dot"></span><span>${currentIndex+1}/${recommendedShops.length}</span><div class="stamps">${recommendedShops.map((s,i)=>`<div class="stamp ${sessionVisited.has(s.id)?'done':i===currentIndex?'current':''}">${sessionVisited.has(s.id)?'✓':i+1}</div>`).join('')}</div></div><div class="dest-shop"><div class="dest-photo">${shop.icon}</div><div class="dest-info"><h2>${shop.name}</h2><p>${shop.address}</p></div><div class="dest-walk">${shop.walkTime||'-'}</div></div><div class="dest-status-bar"><span class="status ${st.status}">${st.text}</span><span class="hours">🕐 ${shop.hours}</span></div><div class="dest-genres">${shop.genres.slice(0,4).map(g=>`<span class="genre-tag">#${g}</span>`).join('')}</div><div class="dest-actions">${isCurrentVisited?`<button class="action-btn danger" onclick="undoComplete()">↩ 취소</button><button class="action-btn primary" onclick="nextShop()">다음 →</button>`:`<button class="action-btn secondary" onclick="openModal(${shop.id})">상세</button><button class="action-btn success" onclick="completeShop()">✓ 도착</button>`}</div>`;document.getElementById('mapStatus').innerHTML=`<div class="map-status-icon">${shop.icon}</div><div class="map-status-text"><div class="title">${shop.name}</div><div class="sub">${shop.distText||'-'}</div></div><span class="map-status-badge ${st.status}">${st.text}</span>`;if(next){document.getElementById('nextPreview').innerHTML=`<div class="next-icon">${next.icon}</div><div class="next-info"><div class="label">다음</div><h4>${next.name}</h4></div><div class="next-walk">→ ${formatWalk(calcDist(shop.lat,shop.lng,next.lat,next.lng))}</div>`;document.getElementById('nextPreview').style.display='flex';}else{document.getElementById('nextPreview').innerHTML=`<div class="next-info" style="width:100%;text-align:center"><div class="label">🎉 마지막!</div></div>`;}}
+function completeShop(){markVisited(recommendedShops[currentIndex].id);showToast(`✓ ${recommendedShops[currentIndex].name} 완료!`);updateCurrentDest();updateMap();if(recommendedShops.every(s=>sessionVisited.has(s.id)))setTimeout(()=>showComplete(),500);}
+function undoComplete(){unmarkVisited(recommendedShops[currentIndex].id);showToast(`↩ 취소됨`);updateCurrentDest();updateMap();}
+function nextShop(){if(currentIndex<recommendedShops.length-1){currentIndex++;updateCurrentDest();updateMap();}else showComplete();}
+function showComplete(){const visitedList=recommendedShops.filter(s=>sessionVisited.has(s.id));savedData.totalVisits++;saveData();document.getElementById('completeSubtext').textContent=`${visitedList.length}곳 방문 완료`;document.getElementById('completeContent').innerHTML=visitedList.map(shop=>`<div class="complete-card"><div class="complete-icon">${shop.icon}</div><div class="complete-info"><h3>${shop.name}</h3><p>${shop.address}</p></div></div>`).join('');document.getElementById('app').classList.remove('show');document.getElementById('complete').classList.add('show');}
+function viewAllMap(){document.getElementById('complete').classList.remove('show');document.getElementById('freeApp').classList.add('show');renderFilterRow();updateFreeStats();setTimeout(()=>{initFreeMap();setTimeout(()=>{if(freeMap){google.maps.event.trigger(freeMap,'resize');freeMap.setCenter({lat:37.554,lng:126.922});freeMap.setZoom(17);}},200);},100);}
+
+const darkMapStyles=[{elementType:"geometry",stylers:[{color:"#1d1d1f"}]},{elementType:"labels.text.fill",stylers:[{color:"#8e8e93"}]},{featureType:"road",elementType:"geometry",stylers:[{color:"#2c2c2e"}]},{featureType:"poi",stylers:[{visibility:"off"}]},{featureType:"water",stylers:[{color:"#0e0e0e"}]}];
+function initApp(){startTracking();}
+function initFreeMap(){const mapDiv=document.getElementById('freeMap');if(!mapDiv)return;if(freeMap){updateFreeMap();return;}freeMap=new google.maps.Map(mapDiv,{center:{lat:37.554,lng:126.922},zoom:17,disableDefaultUI:true,zoomControl:true,gestureHandling:'greedy',styles:isDarkMode?darkMapStyles:[{featureType:"poi",stylers:[{visibility:"off"}]}]});google.maps.event.addListenerOnce(freeMap,'idle',()=>updateFreeMap());}
+function updateFreeMap(){if(!freeMap)return;if(markerCluster){markerCluster.clearMarkers();markerCluster=null;}if(window.freeMarkers)window.freeMarkers.forEach(m=>m.setMap(null));window.freeMarkers=[];const filtered=getFilteredShops(),markers=[];filtered.forEach(shop=>{const visited=isVisited(shop.id),st=getShopStatus(shop);const marker=new google.maps.Marker({position:{lat:shop.lat,lng:shop.lng},icon:{url:`data:image/svg+xml,${encodeURIComponent(`<svg width="36" height="44" xmlns="http://www.w3.org/2000/svg"><circle cx="18" cy="18" r="16" fill="${visited?'#30d158':st.isOpen?'#007aff':'#666'}" stroke="#fff" stroke-width="2"/><text x="18" y="24" font-size="14" text-anchor="middle" fill="white">${visited?'✓':shop.icon}</text></svg>`)}`,scaledSize:new google.maps.Size(36,44),anchor:new google.maps.Point(18,22)}});marker.addListener('click',()=>openModal(shop.id));markers.push(marker);window.freeMarkers.push(marker);});if(typeof markerClusterer!=='undefined'){markerCluster=new markerClusterer.MarkerClusterer({map:freeMap,markers:markers,renderer:{render:({count,position})=>new google.maps.Marker({position,icon:{url:`data:image/svg+xml,${encodeURIComponent(`<svg width="44" height="44" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="20" fill="#007aff" stroke="#fff" stroke-width="2"/><text x="22" y="28" font-size="16" font-weight="bold" text-anchor="middle" fill="white">${count}</text></svg>`)}`,scaledSize:new google.maps.Size(44,44),anchor:new google.maps.Point(22,22)},zIndex:1000+count})}});}else{markers.forEach(m=>m.setMap(freeMap));}}
+function startTracking(){if(!navigator.geolocation)return;navigator.geolocation.watchPosition(pos=>{userLocation={lat:pos.coords.latitude,lng:pos.coords.longitude};updateDistances();if(map){if(!userMarker){userMarker=new google.maps.Marker({position:userLocation,map,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#007aff',fillOpacity:1,strokeColor:'#fff',strokeWeight:2},zIndex:2000});}else{userMarker.setPosition(userLocation);}}if(freeMap){if(!freeUserMarker){freeUserMarker=new google.maps.Marker({position:userLocation,map:freeMap,icon:{path:google.maps.SymbolPath.CIRCLE,scale:8,fillColor:'#007aff',fillOpacity:1,strokeColor:'#fff',strokeWeight:2},zIndex:2000});}else{freeUserMarker.setPosition(userLocation);}}},()=>{},{enableHighAccuracy:true,timeout:15000,maximumAge:0});}
+function updateMap(){if(!map)return;if(window.shopMarkers)window.shopMarkers.forEach(m=>m.setMap(null));if(window.routeLine)window.routeLine.setMap(null);window.shopMarkers=[];const bounds=new google.maps.LatLngBounds();const pathCoords=[];recommendedShops.forEach((shop,idx)=>{const isCurrent=idx===currentIndex,isDone=sessionVisited.has(shop.id);const marker=new google.maps.Marker({position:{lat:shop.lat,lng:shop.lng},map,icon:{url:`data:image/svg+xml,${encodeURIComponent(`<svg width="44" height="52" xmlns="http://www.w3.org/2000/svg"><circle cx="22" cy="22" r="20" fill="${isDone?'#30d158':isCurrent?'#007aff':'#444'}" stroke="white" stroke-width="2"/><text x="22" y="28" font-size="18" text-anchor="middle" fill="white">${isDone?'✓':shop.icon}</text></svg>`)}`,scaledSize:new google.maps.Size(44,52),anchor:new google.maps.Point(22,26)},zIndex:isCurrent?500:100});marker.addListener('click',()=>openModal(shop.id));window.shopMarkers.push(marker);bounds.extend({lat:shop.lat,lng:shop.lng});pathCoords.push({lat:shop.lat,lng:shop.lng});});window.routeLine=new google.maps.Polyline({path:pathCoords,geodesic:true,strokeColor:'#007aff',strokeOpacity:0,icons:[{icon:{path:'M 0,-1 0,1',strokeOpacity:0.5,scale:2},offset:'0',repeat:'12px'}]});window.routeLine.setMap(map);map.fitBounds(bounds,60);}
+
+function openModal(shopId){const shop=shops.find(s=>s.id===shopId);if(!shop)return;const st=getShopStatus(shop),visited=isVisited(shop.id),reviews=getReviews(shop.id);document.getElementById('modalContent').innerHTML=`<div class="modal-photo">${shop.icon}<span class="modal-status ${st.status}">${st.text}</span></div><div class="modal-title-row"><span class="modal-title">${shop.name}</span>${visited?'<span class="genre-tag" style="background:var(--success);color:#fff;">✓ 방문함</span>':''}</div><div class="modal-meta"><span>📍 ${shop.address}</span>${shop.walkTime?`<span>🚶 ${shop.walkTime}</span>`:''}<span>🏷 ${shop.type}</span></div><div class="modal-genres">${shop.genres.map(g=>`<span class="genre-tag">#${g}</span>`).join('')}</div><div class="modal-info"><div class="modal-info-row"><span class="icon">🕐</span>${shop.hours}</div>${shop.distText?`<div class="modal-info-row"><span class="icon">📍</span>${shop.distText}</div>`:''}</div><div class="review-section"><div class="review-title">💬 한줄평</div><div class="review-input-wrap"><input type="text" class="review-input" id="reviewInput" placeholder="한줄평을 남겨보세요" maxlength="50"><button class="review-submit" onclick="submitReview(${shop.id})">등록</button></div><div class="review-list">${reviews.length>0?reviews.map(r=>`<div class="review-item">${r.text}<div class="date">${r.date}</div></div>`).join(''):'<div style="color:var(--text-sub);font-size:12px;">아직 한줄평이 없어요</div>'}</div></div><div class="modal-actions"><button class="modal-btn secondary" onclick="closeModal()">닫기</button>${visited?`<button class="modal-btn danger" onclick="unmarkVisitedFromModal(${shop.id})">방문 취소</button>`:`<button class="modal-btn success" onclick="markVisitedFromModal(${shop.id})">✓ 방문 완료</button>`}</div>`;document.getElementById('modal').classList.add('show');}
+function submitReview(shopId){const input=document.getElementById('reviewInput'),text=input.value.trim();if(!text)return;addReview(shopId,text);showToast('💬 등록됨');openModal(shopId);}
+function markVisitedFromModal(shopId){markVisited(shopId);showToast('✓ 방문 완료');closeModal();if(freeMap){updateFreeMap();updateFreeStats();}}
+function unmarkVisitedFromModal(shopId){unmarkVisitedPermanent(shopId);showToast('↩ 삭제됨');closeModal();if(freeMap){updateFreeMap();updateFreeStats();}}
+function closeModal(e){if(e&&e.target.id!=='modal')return;document.getElementById('modal').classList.remove('show');}
+function shareCourse(){const totalWalk=recommendedShops.reduce((sum,s)=>sum+(s.dist||0),0);const text=`🎭 홍대 굿즈샵 추천\n\n${recommendedShops.map((s,i)=>`${i+1}. ${s.name}`).join('\n')}\n\n총 도보 약 ${formatWalk(totalWalk)}\n\nhttps://wonjong0304-oss.github.io/hongdae-goods/`;if(navigator.share)navigator.share({title:'홍대 굿즈샵',text});else{navigator.clipboard.writeText(text);showToast('📋 복사됨!');}}
+function resetApp(){location.reload();}
+</script>
+</body>
+</html>
